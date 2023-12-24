@@ -1,0 +1,17 @@
+/* ================= MOBILE STYLES ================== */
+
+@media (max-width: /* 768px */ 990px) {
+    body {
+        // styles overrides
+        overflow-x: hidden;
+        overflow-y: unset;
+    }
+    article {
+        > section {
+            height: unset;
+            // height: viewport - (global header + global header margin + article header + article footer)
+            min-height: calc(100vh - (110px + 0px + 63px + 125px));
+        }
+            
+    }
+}

@@ -1,0 +1,18 @@
+/* ----------------- ARTICLES STYLES ---------------- */
+
+article {
+    /* ===== PAGE HEADER ===== */
+    > header > h1 {
+        font-family: 'Tienne', serif;
+        margin-bottom: unset;
+        font-size: 25px;
+        font-weight: unset;
+    }
+    /* ===== PAGE CONTENT ===== */
+    > section {
+        // height: viewport - (global header + global header margin + article header + article footer)
+        height: calc(100vh - (95px + 56.25px + 80px + 130px));
+        margin-bottom: unset;
+    }
+
+}

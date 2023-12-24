@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300&family=Nunito:ital,wght@1,1000&family=Tienne&display=swap');
+
+/* --------------- CUSTOM VARIABLES --------------- */
+
+// fonts size
+$font_large: 45px;
+$font_small: 20px;
+
+/* ---------------- CUSTOM MIXINS ----------------- */
+
+// rounded or square boxes
+@mixin box($width: initial, $height: initial, $padding: 15px 15px, $backcolor: lightgrey, $radius: 7.5px) {
+    width: $width;
+    height: $height;
+    padding: $padding;
+    // background-color: $backcolor;
+    border-radius: $radius;
+    // static box sizing
+    box-sizing: border-box;
+}
+
+// centered even flex layout
+@mixin flex($direction: column, $align: center, $justify: space-around) {
+    display: flex;
+    flex-direction: $direction;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+// spans and h's
+@mixin span($margin: 5px 0 5px 0, $size: $font_small, $weight: 400, $color: black) {
+    margin: $margin;
+    font-size: $size;
+    font-weight: $weight;
+    color: $color;
+}
+
+// import custom styles ...
+@import "custom/__layout.scss";
+@import "custom/__articles.scss";
+@import "custom/__animations.scss";
+@import "custom/__overridings.scss";
+@import "custom/__breakpoints.scss";
