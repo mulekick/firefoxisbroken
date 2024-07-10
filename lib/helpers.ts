@@ -50,10 +50,10 @@ const
     getColor = ():string => `hsl(${ 360 * Math.random() }, ${ 45 + 50 * Math.random() }%, ${ 45 + 50 * Math.random() }%)`,
 
     // get container dimensions
-    getContainerArea = (wr:React.MutableRefObject<Window>, ew: number, eh: number):AnimationsParams => {
+    getContainerArea = (ew: number, eh: number):AnimationsParams => {
         const
             // read container div dimensions
-            e:HTMLDivElement|null = wr.current.document.querySelector(`#page-content`),
+            e:HTMLDivElement|null = window.document.querySelector(`#page-content`),
             r:DOMRect|null = e ? e.getBoundingClientRect() : null,
             // default to 0 if unavailable (we prevent render until container div has loaded)
             w = r ? r.width - ew : 0,
@@ -64,8 +64,8 @@ const
 
     // debounce callback execution ... higher order functions require
     // using the function signature as a type when passing as a parameter
-    debounceCallback = (wr:React.MutableRefObject<Window>, tr:React.MutableRefObject<number>, cb:() => void, t:number):void => {
-        wr.current.clearTimeout(tr.current);
+    debounceCallback = (tr:React.MutableRefObject<number>, cb:() => void, t:number):void => {
+        window.clearTimeout(tr.current);
         tr.current = window.setTimeout(cb, t);
     },
 

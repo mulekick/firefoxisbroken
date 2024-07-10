@@ -18,7 +18,7 @@ const
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     getStaticProps: GetStaticProps = (context: GetStaticPropsContext) => ({
         // eslint-disable-next-line newline-per-chained-call
-        props: {ep: new Array(15).fill(null).map(() => getEmoji())}
+        props: {ep: new Array(7).fill(null).map(() => getEmoji())}
     });
 
 // export static site generation function in a namespace
@@ -34,8 +34,8 @@ const
 
         // return component
         return <Layout
-            title={ `Firefox is broken` }
-            description={ `Guess what firefox is broken` }
+            title={ `Firefox is broken ?` }
+            description={ `Not broken just acting up a bit I guess 🤔` }
             outletComponent={ <Animations emojisPopulation={ ep } /> }
         />;
     };

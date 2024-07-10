@@ -1,3 +1,4 @@
+
 // import modules
 import React, {useState, useEffect, useRef} from "react";
 // eslint-disable-next-line object-curly-newline, no-unused-vars, @typescript-eslint/no-unused-vars
@@ -36,7 +37,9 @@ const
             <style>
                 {
                     `.set-inner-perspective {
-                        perspective-origin: bottom;
+                        /* inherit parent property value ... */
+                        transform-style: inherit;
+                        perspective-origin: top;
                         perspective: ${ viewerPerspective }px;
                     }`
                 }
@@ -52,7 +55,9 @@ const
             // ...
             {index, emojis, duration, translateTo: {x, y, z}, rotateTo: {rx, ry, rz}, totalElements, maxDelay} = props,
             // current animation delay
-            currentDelay = index * maxDelay / totalElements;
+            currentDelay = index * maxDelay / totalElements,
+            // prism face width and height in pixels
+            [ faceWidth, faceHeight ] = [ 75, 150 ];
 
         // 1) the transform-box property seems only relevant to SVG transforms ... also,
         // when doing transforms on 3d elements, the transform-origin property has to
@@ -72,45 +77,46 @@ const
                     }
                     .emoji-side-${ index }-1 {
                         background-color: ${ getColor() };
-                        transform-origin: 50px 0 0;
-                        transform: ${ translate(0, -100, 0) } ${ rotateY(108) };
+                        transform-origin: ${ faceWidth }px 0 0;
+                        transform: ${ translate(0, faceHeight * -1, 0) } ${ rotateY(108) };
 
                     }
                     .emoji-side-${ index }-2 {
                         background-color: ${ getColor() };
                         transform-origin: 0 0 0;
-                        transform: ${ translate(0, -200, 0) } ${ rotateY(-108) };
+                        transform: ${ translate(0, faceHeight * -2, 0) } ${ rotateY(-108) };
 
                     }
                     .emoji-side-${ index }-3 {
                         background-color: ${ getColor() };
                         transform-origin: 0 0 0;
-                        transform: ${ translate(-50 * cos(72), -300, 50 * sin(72)) } ${ rotateY(-36) };
+                        transform: ${ translate(faceWidth * -1 * cos(72), faceHeight * -3, faceWidth * sin(72)) } ${ rotateY(-36) };
 
                     }
                     .emoji-side-${ index }-4 {
                         background-color: ${ getColor() };
-                        transform-origin: 50px 0 0;
-                        transform: ${ translate(50 * cos(72), -400, 50 * sin(72)) } ${ rotateY(36) };
+                        transform-origin: ${ faceWidth }px 0 0;
+                        transform: ${ translate(faceWidth * cos(72), faceHeight * -4, faceWidth * sin(72)) } ${ rotateY(36) };
 
                     }
-                    @keyframes buzz-${ index } {
+                    @keyframes float-${ index } {
                         from {
                             visibility: visible;
-                            transform-origin: 25px 50px ${ 25 * sin(54) / cos(54) }px;
-                            transform: ${ translate(x, y, z) } ${ rotateY(-45) } ${ scale(2, 2, 2) } ;
+                            transform-origin: ${ faceWidth / 2 }px ${ faceWidth }px ${ faceHeight / 4 * sin(54) / cos(54) }px;
+                            transform: ${ translate(x, y, z) } ${ rotateY(-45) };
                         }
                         to {
                             visibility: visible;
-                            transform-origin: 25px 50px ${ 25 * sin(54) / cos(54) }px;
-                            transform: ${ translate(x, y, z) } ${ rotateY(-45) } ${ scale(2, 2, 2) } rotate3d(${ rx }, ${ ry }, ${ rz }, 360deg)  ;
+                            transform-origin: ${ faceWidth / 2 }px ${ faceWidth }px ${ faceHeight / 4 * sin(54) / cos(54) }px;
+                            transform: ${ translate(x, y, z) } ${ rotateY(-45) } rotate3d(${ rx }, ${ ry }, ${ rz }, 360deg)  ;
                         }
                     }
                     .animate-${ index } {
+                        /* inherit parent property value ... */
+                        transform-style: inherit;
                         visibility: hidden;
-                        transform-style: preserve-3d;
                         position: absolute;
-                        animation: ${ String(duration) }s linear ${ String(currentDelay / 10) }s infinite normal forwards running buzz-${ index };
+                        animation: ${ String(duration) }s linear ${ String(currentDelay / 10) }s infinite normal forwards running float-${ index };
                     }`
                 }
             </style>
@@ -128,33 +134,28 @@ const
         const
             // extract props
             {emojisPopulation} = props,
-            // create ref to DOM
-            windowRef = useRef<Window>(window),
             // create ref to debounce timer
             debounceTimerRef = useRef<number>(0),
             // store container dimensions in state
-            [ windowArea, setWindowArea ] = useState<AnimationsParams>(getContainerArea(windowRef, EMOJI_WIDTH, EMOJI_HEIGHT * 2)),
+            [ windowArea, setWindowArea ] = useState<AnimationsParams>(getContainerArea(EMOJI_WIDTH, EMOJI_HEIGHT * 2)),
             // container loaded indicator
             [ containerLoaded, setContainerLoaded ] = useState<boolean>(false),
             // window resize listener ...
-            resizeListener = ():void => debounceCallback(windowRef, debounceTimerRef, ():void => {
+            resizeListener = ():void => debounceCallback(debounceTimerRef, ():void => {
                 // eslint-disable-next-line max-nested-callbacks
-                requestAnimationFrame(():number => requestAnimationFrame(():void => setWindowArea(getContainerArea(windowRef, EMOJI_WIDTH, EMOJI_HEIGHT * 2))));
+                requestAnimationFrame(():number => requestAnimationFrame(():void => setWindowArea(getContainerArea(EMOJI_WIDTH, EMOJI_HEIGHT * 2))));
             }, RESIZE_DEBOUNCE_TIME);
 
         // re-render everything on resize ...
         useEffect(() => {
             // initial read of container dimensions ...
-            setWindowArea(getContainerArea(windowRef, EMOJI_WIDTH, EMOJI_HEIGHT * 2));
+            setWindowArea(getContainerArea(EMOJI_WIDTH, EMOJI_HEIGHT * 2));
             // mark container as loaded
             setContainerLoaded(true);
-            const
-                // preserve original reference to window ref through a scoped variable ...
-                wrc = windowRef.current;
             // add resize listener, debounce execution
-            wrc.addEventListener(`resize`, resizeListener);
+            window.addEventListener(`resize`, resizeListener);
             // remove listener on component unmount
-            return () => wrc.removeEventListener(`resize`, resizeListener);
+            return () => window.removeEventListener(`resize`, resizeListener);
         // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 
@@ -167,40 +168,38 @@ const
                 <style>
                     {
                         `@keyframes reveal-perspective {
-                            from {
-                                perspective-origin: top;
-                                perspective: ${ DEFAULT_PERSPECTIVE * 2 }px;
-                            }
                             to {
                                 perspective-origin: bottom;
                                 perspective: ${ DEFAULT_PERSPECTIVE }px;
                             }
                         }
                         .set-outer-perspective {
+                            perspective-origin: top;
+                            perspective: ${ DEFAULT_PERSPECTIVE * 2 }px;
                             animation: 5s ease-out 1.5s 1 normal forwards running reveal-perspective;
-                        }                   
+                        }
                         @keyframes reveal-transform {
-                            from {
-                                transform-origin: top;
-                                transform: ${ rotateX(0) };
-                            }
                             to {
                                 transform-origin: bottom;
                                 transform: ${ rotateX(45) };
                             }
                         }
                         .set-perspective-transform {
+                            /* set all descendants for rendering in the 3d space */
+                            /* failure to do this prevents correct rendering of 3d transforms further down ... */
+                            transform-style: preserve-3d;
+                            transform-origin: top;
                             animation: 5s ease-out 1.5s 1 normal forwards running reveal-transform;
                         }`
                     }
                 </style>
             }
             <div className="set-outer-perspective">
-                { /* apply the transform on the whole article ... */}
+                { /* apply the transform on the whole article ... */ }
                 <article className="set-perspective-transform">
-                    <Header title={ `No way this works on Firefox` } />
-                    { /* and the second perspective to the page contents element */}
-                    <Keyframes viewerPerspective={ DEFAULT_PERSPECTIVE }>
+                    <Header title={ `Not consistent with chrome, but okay 🤨` } />
+                    { /* and the second perspective to the page contents element */ }
+                    <Keyframes viewerPerspective={ DEFAULT_PERSPECTIVE * 4 }>
                         {
                             // render only once container has loaded ...
                             containerLoaded ?
@@ -214,7 +213,7 @@ const
                                         y: rnd(0, windowArea.h),
                                         // z: rnd(0.1e2, 0.99e3)
                                         // stack emojis instead ...
-                                        z: i * (0.8e3 / a.length)
+                                        z: 75 + i * (DEFAULT_PERSPECTIVE * 0.25 / a.length)
                                     } }
                                     rotateTo={ {
                                         rx: rnd(-180, 180),

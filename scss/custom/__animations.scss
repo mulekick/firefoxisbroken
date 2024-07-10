@@ -3,8 +3,8 @@
 // emojis floating
 div.emoji-side {
     @include flex($align: center, $justify: center);
-    width: 50px;
-    height: 100px;
-    font-size: 15px;
+    width: 75px;
+    height: 150px;
+    font-size: 20px;
     border: 1px solid #000;
 }
